@@ -1,0 +1,16 @@
+{
+  "name": "nodes",
+  "version": "0.0.0",
+  "description": "document object model for ast nodes, with parent references, queries and validation",
+  "main": "index.js",
+  "keywords": [
+    "esprima",
+    "ast",
+    "SpiderMonkey"
+  ],
+  "author": "Valerio Proietti <kamicane@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "slick": "~1.12.1"
+  }
+}
