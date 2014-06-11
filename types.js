@@ -1,12 +1,11 @@
 'use strict';
 
-var s = require('../syntax.json');
+var syntax = require('./syntax.json');
 
-var typeOf = require('./type-of');
-var factory = require('./factory');
+var typeOf = require('./util/type-of');
+var factory = require('./lib/factory');
 
 var Node = factory.Node;
-var List = factory.List;
 
 // # type checks
 
@@ -16,10 +15,8 @@ var number = { test: typeOf.Number };
 var regexp = { test: typeOf.RegExp };
 
 var expect = factory.expect;
-
-var describe = function(SuperNode, description) {
-  return nodes[description.type] = factory.describe(SuperNode, description);
-};
+var types = factory.types;
+var describe = factory.describe;
 
 // # Statement
 
@@ -30,20 +27,20 @@ var Statement = describe(Node, {
 // # Program
 
 var Program = describe(Node, {
-  type: s.Program,
+  type: syntax.Program,
   body: [ Statement ]
 });
 
 // # EmptyStatement
 
 var EmptyStatement = describe(Statement, {
-  type: s.EmptyStatement
+  type: syntax.EmptyStatement
 });
 
 // # BlockStatement
 
 var BlockStatement = describe(Statement, {
-  type: s.BlockStatement,
+  type: syntax.BlockStatement,
   body: [ Statement ]
 });
 
@@ -56,20 +53,20 @@ var Expression = describe(Node, {
 // # ExpressionStatement
 
 var ExpressionStatement = describe(Statement, {
-  type: s.ExpressionStatement,
+  type: syntax.ExpressionStatement,
   expression: Expression
 });
 
 // # Identifier
 
 var Identifier = describe(Expression, {
-  type: s.Identifier,
+  type: syntax.Identifier,
   name: string
 });
 
 // # Pattern
 
-var Pattern = nodes.Pattern =  { test: function(item) {
+var Pattern = types.Pattern =  { test: function(item) {
   return item instanceof Identifier ||
          item instanceof ArrayPattern ||
          item instanceof ObjectPattern;
@@ -78,32 +75,32 @@ var Pattern = nodes.Pattern =  { test: function(item) {
 // # ArrayPattern
 
 var ArrayPattern = describe(Node, {
-  type: s.ArrayPattern,
+  type: syntax.ArrayPattern,
   elements: [ Pattern, null ]
 });
 
 // # Literal
 
 var Literal = describe(Expression, {
-  type: s.Literal,
+  type: syntax.Literal,
   value: expect(string, boolean, null, number, regexp)
 });
 
 // # Property
 
 var Property = describe(Node, {
-  type: s.Property,
+  type: syntax.Property,
   key: expect(Literal, Identifier),
   value: expect(Pattern, Expression),
   kind: /^(init|get|set)$/,
-  shorthand: boolean,
-  method: boolean
+  shorthand: expect(boolean).default(false),
+  method: expect(boolean).default(false)
 });
 
 // # ObjectPattern
 
 var ObjectPattern = describe(Node, {
-  type: s.ObjectPattern,
+  type: syntax.ObjectPattern,
   properties: [ Property, { test: function(item) {
     return Pattern.test(item.value);
   } } ]
@@ -118,49 +115,49 @@ var Declaration = describe(Statement, {
 // # VariableDeclarator
 
 var VariableDeclarator = describe(Node, {
-  type: s.VariableDeclarator,
+  type: syntax.VariableDeclarator,
   id: Pattern,
-  init: expect(Expression, null)
+  init: expect(Expression, null).default(null)
 });
 
 // # VariableDeclaration
 
 var VariableDeclaration = describe(Declaration, {
-  type: s.VariableDeclaration,
+  type: syntax.VariableDeclaration,
   declarations: [ VariableDeclarator ],
-  kind: /^(var|let|const)$/,
+  kind: expect(/^(var|let|const)$/).default('var')
 });
 
 // # FunctionDeclaration
 
 var FunctionDeclaration = describe(Declaration, {
-  type: s.FunctionDeclaration,
-  id: expect(Identifier, null),
+  type: syntax.FunctionDeclaration,
+  id: expect(Identifier, null).default(null),
   params: [ Pattern ],
   defaults: [ Expression ],
-  rest: expect(Identifier, null),
+  rest: expect(Identifier, null).default(null),
   body: expect(BlockStatement, Expression),
-  generator: boolean,
-  expression: boolean
+  generator: expect(boolean).default(false),
+  expression: expect(boolean).default(false)
 });
 
 // # FunctionExpression
 
 var FunctionExpression = describe(Expression, {
-  type: s.FunctionExpression,
-  id: expect(Identifier, null),
+  type: syntax.FunctionExpression,
+  id: expect(Identifier, null).default(null),
   params: [ Pattern ],
   defaults: [ Expression ],
-  rest: expect(Identifier, null),
+  rest: expect(Identifier, null).default(null),
   body: expect(BlockStatement, Expression),
-  generator: boolean,
-  expression: boolean
+  generator: expect(boolean).default(false),
+  expression: expect(boolean).default(false)
 });
 
 // # CallExpression
 
 var CallExpression = describe(Expression, {
-  type: s.CallExpression,
+  type: syntax.CallExpression,
   callee: Expression,
   arguments: [ Expression ]
 });
@@ -168,10 +165,10 @@ var CallExpression = describe(Expression, {
 // # MemberExpression
 
 var MemberExpression = describe(Expression, {
-  type: s.MemberExpression,
+  type: syntax.MemberExpression,
   object: Expression,
   property: expect(Identifier, Expression),
-  computed: boolean
+  computed: expect(boolean).default(false)
 });
 
 // # UnaryExpression
@@ -179,7 +176,7 @@ var MemberExpression = describe(Expression, {
 var UnaryOperator = /^(\-|\+|\!|\~|typeof|void|delete)$/;
 
 var UnaryExpression = describe(Expression, {
-  type: s.UnaryExpression,
+  type: syntax.UnaryExpression,
   operator: UnaryOperator,
   prefix: boolean,
   argument: Expression
@@ -188,10 +185,10 @@ var UnaryExpression = describe(Expression, {
 // # IfStatement
 
 var IfStatement = describe(Statement, {
-  type: s.IfStatement,
+  type: syntax.IfStatement,
   test: Expression,
   consequent: Statement,
-  alternate: expect(Statement, null)
+  alternate: expect(Statement, null).default(null)
 });
 
 // # BinaryExpression
@@ -199,7 +196,7 @@ var IfStatement = describe(Statement, {
 var BinaryOperator = /^(==|!=|===|!==|<|<=|>|>=|<<|>>|>>>|\+|-|\*|\/|\%|\||\^|\&|in|instanceof|\.\.)$/;
 
 var BinaryExpression = describe(Expression, {
-  type: s.BinaryExpression,
+  type: syntax.BinaryExpression,
   operator: BinaryOperator,
   left: Expression,
   right: Expression
@@ -208,8 +205,8 @@ var BinaryExpression = describe(Expression, {
 // # ReturnStatement
 
 var ReturnStatement = describe(Statement, {
-  type: s.ReturnStatement,
-  argument: expect(Expression, null)
+  type: syntax.ReturnStatement,
+  argument: expect(Expression, null).default(null)
 });
 
 // # AssignmentExpression
@@ -217,7 +214,7 @@ var ReturnStatement = describe(Statement, {
 var AssignmentOperator = /^(=|\+=|-=|\*|\/=|%=|<<=|>>=|>>>=|\|=|\^=|&=)$/;
 
 var AssignmentExpression = describe(Expression, {
-  type: s.AssignmentExpression,
+  type: syntax.AssignmentExpression,
   operator: AssignmentOperator,
   left: Expression,
   right: Expression
@@ -226,10 +223,10 @@ var AssignmentExpression = describe(Expression, {
 // # ForStatement
 
 var ForStatement = describe(Statement, {
-  type: s.ForStatement,
-  init: expect(VariableDeclaration, Expression, null),
-  test: expect(Expression, null),
-  update: expect(Expression, null),
+  type: syntax.ForStatement,
+  init: expect(VariableDeclaration, Expression, null).default(null),
+  test: expect(Expression, null).default(null),
+  update: expect(Expression, null).default(null),
   body: Statement
 });
 
@@ -238,7 +235,7 @@ var ForStatement = describe(Statement, {
 var UpdateOperator = /^(\+\+|--)$/;
 
 var UpdateExpression = describe(Expression, {
-  type: s.UpdateExpression,
+  type: syntax.UpdateExpression,
   operator: UpdateOperator,
   argument: Expression,
   prefix: boolean
@@ -247,41 +244,41 @@ var UpdateExpression = describe(Expression, {
 // # ThisExpression
 
 var ThisExpression = describe(Expression, {
-  type: s.ThisExpression,
+  type: syntax.ThisExpression,
 });
 
 // # ArrayExpression
 
 var ArrayExpression = describe(Expression, {
-  type: s.ArrayExpression,
+  type: syntax.ArrayExpression,
   elements: [ Expression, null ]
 });
 
 // # ObjectExpression
 
 var ObjectExpression = describe(Expression, {
-  type: s.ObjectExpression,
+  type: syntax.ObjectExpression,
   properties: [ Property ]
 });
 
 // # SequenceExpression
 
 var SequenceExpression = describe(Expression, {
-  type: s.SequenceExpression,
+  type: syntax.SequenceExpression,
   expressions: [ Expression ]
 });
 
 // # ThrowStatement
 
 var ThrowStatement = describe(Statement, {
-  type: s.ThrowStatement,
+  type: syntax.ThrowStatement,
   argument: Expression
 });
 
 // # CatchClause
 
 var CatchClause = describe(Node, {
-  type: s.CatchClause,
+  type: syntax.CatchClause,
   param: Pattern,
   guard: expect(Expression, null),
   body: BlockStatement
@@ -290,7 +287,7 @@ var CatchClause = describe(Node, {
 // # WhileStatement
 
 var WhileStatement = describe(Statement, {
-  type: s.WhileStatement,
+  type: syntax.WhileStatement,
   test: Expression,
   body: Statement
 });
@@ -298,7 +295,7 @@ var WhileStatement = describe(Statement, {
 // # NewExpression
 
 var NewExpression = describe(Expression, {
-  type: s.NewExpression,
+  type: syntax.NewExpression,
   callee: Expression,
   arguments: [ Expression ]
 });
@@ -308,7 +305,7 @@ var NewExpression = describe(Expression, {
 var LogicalOperator = /^(\|\||&&)$/;
 
 var LogicalExpression = describe(Expression, {
-  type: s.LogicalExpression,
+  type: syntax.LogicalExpression,
   operator: LogicalOperator,
   left: Expression,
   right: Expression
@@ -317,7 +314,7 @@ var LogicalExpression = describe(Expression, {
 // #
 
 var ConditionalExpression = describe(Expression, {
-  type: s.ConditionalExpression,
+  type: syntax.ConditionalExpression,
   test: Expression,
   alternate: Expression,
   consequent: Expression
@@ -326,24 +323,24 @@ var ConditionalExpression = describe(Expression, {
 // #
 
 var ForInStatement = describe(Statement, {
-  type: s.ForInStatement,
+  type: syntax.ForInStatement,
   left: expect(VariableDeclaration, Expression),
   right: Expression,
   body: Statement,
-  each: boolean
+  each: expect(boolean).default(false)
 });
 
 // #
 
 var ContinueStatement = describe(Statement, {
-  type: s.ContinueStatement,
-  label: expect(Identifier, null)
+  type: syntax.ContinueStatement,
+  label: expect(Identifier, null).default(null)
 });
 
 // #
 
 var DoWhileStatement = describe(Statement, {
-  type: s.DoWhileStatement,
+  type: syntax.DoWhileStatement,
   body: Statement,
   test: Expression
 });
@@ -351,66 +348,66 @@ var DoWhileStatement = describe(Statement, {
 // #
 
 var BreakStatement = describe(Statement, {
-  type: s.BreakStatement,
-  label: expect(Identifier, null)
+  type: syntax.BreakStatement,
+  label: expect(Identifier, null).default(null)
 });
 
 // #
 
 var SwitchCase = describe(Node, {
-  type: s.SwitchCase,
-  test: expect(Expression, null),
+  type: syntax.SwitchCase,
+  test: expect(Expression, null).default(null),
   consequent: [ Statement ]
 });
 
 // #
 
 var SwitchStatement = describe(Statement, {
-  type: s.SwitchStatement,
+  type: syntax.SwitchStatement,
   discriminant: Expression,
   cases: [ SwitchCase ],
-  lexical: boolean
+  lexical: expect(boolean).default(false)
 });
 
 // #
 
 var ComprehensionBlock = describe(Node, {
-  type: s.ComprehensionBlock,
+  type: syntax.ComprehensionBlock,
   left: Pattern,
   right: Expression,
-  each: boolean
+  each: expect(boolean).default(false)
 });
 
 // #
 
 var YieldExpression = describe(Expression, {
-  type: s.YieldExpression,
-  argument: expect(Expression, null)
+  type: syntax.YieldExpression,
+  argument: expect(Expression, null).default(null)
 });
 
 // #
 
 var ComprehensionExpression = describe(Expression, {
-  type: s.ComprehensionExpression,
+  type: syntax.ComprehensionExpression,
   body: Expression,
   blocks: [ ComprehensionBlock ],
-  filter: expect(Expression, null)
+  filter: expect(Expression, null).default(null)
 });
 
 // #
 
 var TryStatement = describe(Statement, {
-  type: s.TryStatement,
+  type: syntax.TryStatement,
   block: BlockStatement,
-  handler: expect(CatchClause, null),
+  handler: expect(CatchClause, null).default(null),
   guardedHandlers: [ CatchClause ],
-  finalizer: expect(BlockStatement, null)
+  finalizer: expect(BlockStatement, null).default(null)
 });
 
 // #
 
 var LabeledStatement = describe(Statement, {
-  type: s.LabeledStatement,
+  type: syntax.LabeledStatement,
   label: Identifier,
   body: Statement
 });
@@ -418,7 +415,7 @@ var LabeledStatement = describe(Statement, {
 // #
 
 var ForOfStatement = describe(Statement, {
-  type: s.ForOfStatement,
+  type: syntax.ForOfStatement,
   left: expect(VariableDeclaration, Expression),
   right: Expression,
   body: Statement
@@ -427,7 +424,7 @@ var ForOfStatement = describe(Statement, {
 // #
 
 var WithStatement = describe(Statement, {
-  type: s.WithStatement,
+  type: syntax.WithStatement,
   object: Expression,
   body: Statement
 });
@@ -435,23 +432,23 @@ var WithStatement = describe(Statement, {
 // #
 
 var DebuggerStatement = describe(Statement, {
-  type: s.DebuggerStatement
+  type: syntax.DebuggerStatement
 });
 
 // #
 
 var ArrowFunctionExpression = describe(Expression, {
-  type: s.ArrowFunctionExpression,
+  type: syntax.ArrowFunctionExpression,
   params: [ Pattern ],
   defaults: [ Expression ],
-  rest: expect(Identifier, null),
+  rest: expect(Identifier, null).default(null),
   body: expect(BlockStatement, Expression),
-  expression: boolean
+  expression: expect(boolean).default(false)
 });
 
 // # Function
 
-var Function = nodes.Function = { test: function(item) {
+var Function = types.Function = { test: function(item) {
   return item instanceof FunctionExpression ||
          item instanceof FunctionDeclaration ||
          item instanceof ArrowFunctionExpression;
@@ -466,7 +463,7 @@ var Function = nodes.Function = { test: function(item) {
 // "TaggedTemplateExpression", "TemplateElement", "TemplateLiteral"
 
 var SpreadElement = describe(Expression, {
-  type: s.SpreadElement,
+  type: syntax.SpreadElement,
   argument: Expression
 });
 
@@ -475,44 +472,4 @@ var SpreadElement = describe(Expression, {
 // for (var key in s) if (!(key in nodes)) missing.push(key);
 // console.warn('missing', missing);
 
-// # build
-
-function nodes(ast) {
-  if (ast == null) return null;
-
-  var type = ast.type;
-
-  var NodeClass = nodes[type];
-  if (!NodeClass) throw new Error(type + ' is missing');
-
-  var node = new NodeClass;
-
-  var keys = NodeClass.keys;
-
-  for (var i = 0; i < keys.length; i++) {
-    var key = keys[i];
-
-    if (key === 'type') continue;
-
-    var value = ast[key];
-
-    switch(typeOf(value)) {
-      case 'Object':
-        node[key] = nodes(value);
-        break;
-      case 'Array':
-        var list = node[key];
-        for (var j = 0; j < value.length; j++) list.push(nodes(value[j]));
-        break;
-      case 'Undefined': break;
-      default: node[key] = value;
-    }
-  }
-
-  return node;
-}
-
-nodes.Node = Node;
-nodes.List = List;
-
-module.exports = nodes;
+module.exports = types;

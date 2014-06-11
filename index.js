@@ -1,4 +1,4 @@
 'use strict';
 
 require('./lib/finder');
-module.exports = require('./lib/nodes');
+module.exports = require('./lib/factory').build;
