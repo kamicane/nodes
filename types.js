@@ -216,7 +216,7 @@ var AssignmentOperator = /^(=|\+=|-=|\*|\/=|%=|<<=|>>=|>>>=|\|=|\^=|&=)$/;
 var AssignmentExpression = describe(Expression, {
   type: syntax.AssignmentExpression,
   operator: AssignmentOperator,
-  left: Expression,
+  left: Pattern,
   right: Expression
 });
 
