@@ -134,7 +134,7 @@ var FunctionDeclaration = describe(Declaration, {
   type: syntax.FunctionDeclaration,
   id: expect(Identifier, null).default(null),
   params: [ Pattern ],
-  defaults: [ Expression ],
+  defaults: [ Expression, null ],
   rest: expect(Identifier, null).default(null),
   body: expect(BlockStatement, Expression),
   generator: expect(boolean).default(false),
@@ -147,7 +147,7 @@ var FunctionExpression = describe(Expression, {
   type: syntax.FunctionExpression,
   id: expect(Identifier, null).default(null),
   params: [ Pattern ],
-  defaults: [ Expression ],
+  defaults: [ Expression, null ],
   rest: expect(Identifier, null).default(null),
   body: expect(BlockStatement, Expression),
   generator: expect(boolean).default(false),
@@ -440,7 +440,7 @@ var DebuggerStatement = describe(Statement, {
 var ArrowFunctionExpression = describe(Expression, {
   type: syntax.ArrowFunctionExpression,
   params: [ Pattern ],
-  defaults: [ Expression ],
+  defaults: [ Expression, null ],
   rest: expect(Identifier, null).default(null),
   body: expect(BlockStatement, Expression),
   expression: expect(boolean).default(false)
