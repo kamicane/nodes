@@ -7,6 +7,9 @@ var factory = require('./lib/factory');
 
 var Node = factory.Node;
 
+// esprima bug: for in does not parse with array / object patterns
+// esprima bug: for of (and comprehensions blocks) parse as ArrayExpression / ObjectExpression
+
 // # type checks
 
 var string = { test: typeOf.String };
@@ -79,6 +82,18 @@ var ArrayPattern = describe(Node, {
   elements: [ Pattern, null ]
 });
 
+// todo: remove this when for of and for in parse patterns correctly
+ArrayPattern.pre = function(ast) {
+  ast.elements.forEach(function(node) {
+    if (node) switch (node.type) {
+      case syntax.ArrayExpression: node.type = syntax.ArrayPattern; break;
+      case syntax.ObjectExpression: node.type = syntax.ObjectPattern; break;
+    }
+  });
+
+  return ast;
+};
+
 // # Literal
 
 var Literal = describe(Expression, {
@@ -105,6 +120,19 @@ var ObjectPattern = describe(Node, {
     return Pattern.test(item.value);
   } } ]
 });
+
+// todo: remove this when for of and for in parse patterns correctly
+ObjectPattern.pre = function(ast) {
+  ast.properties.forEach(function(node) {
+    var value = node.value;
+    switch (value.type) {
+      case syntax.ArrayExpression: value.type = syntax.ArrayPattern; break;
+      case syntax.ObjectExpression: value.type = syntax.ObjectPattern; break;
+    }
+  });
+
+  return ast;
+};
 
 // # Declaration
 
@@ -324,11 +352,21 @@ var ConditionalExpression = describe(Expression, {
 
 var ForInStatement = describe(Statement, {
   type: syntax.ForInStatement,
-  left: expect(VariableDeclaration, Expression),
+  left: expect(VariableDeclaration, Pattern), // this should not have Expression. Mozilla has it. Esprima parses it.
   right: Expression,
   body: Statement,
   each: expect(boolean).default(false)
 });
+
+// todo: remove this when for of and for in parse patterns correctly
+ForInStatement.pre = function(ast) {
+  var node = ast.left;
+  switch (node.type) {
+    case syntax.ArrayExpression: node.type = syntax.ArrayPattern; break;
+    case syntax.ObjectExpression: node.type = syntax.ObjectPattern; break;
+  }
+  return ast;
+};
 
 // #
 
@@ -371,12 +409,27 @@ var SwitchStatement = describe(Statement, {
 
 // #
 
+var ForOfStatement = describe(Statement, {
+  type: syntax.ForOfStatement,
+  left: expect(VariableDeclaration, Pattern), // this should not have Expression
+  right: Expression,
+  body: Statement
+});
+
+// todo: remove this when forOf / forIn get fixed in esprima
+ForOfStatement.pre = ForInStatement.pre;
+
+// #
+
 var ComprehensionBlock = describe(Node, {
   type: syntax.ComprehensionBlock,
-  left: Pattern,
+  left: Pattern, // this should not have Expression, esprima parses it wrong.
   right: Expression,
-  each: expect(boolean).default(false)
+  each: expect(boolean).default(false),
+  of: expect(boolean).default(true)
 });
+
+ComprehensionBlock.pre = ForOfStatement.pre;
 
 // #
 
@@ -409,15 +462,6 @@ var TryStatement = describe(Statement, {
 var LabeledStatement = describe(Statement, {
   type: syntax.LabeledStatement,
   label: Identifier,
-  body: Statement
-});
-
-// #
-
-var ForOfStatement = describe(Statement, {
-  type: syntax.ForOfStatement,
-  left: expect(VariableDeclaration, Expression),
-  right: Expression,
   body: Statement
 });
 
