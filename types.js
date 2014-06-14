@@ -195,7 +195,7 @@ var CallExpression = describe(Expression, {
 var MemberExpression = describe(Expression, {
   type: syntax.MemberExpression,
   object: Expression,
-  property: expect(Identifier, Expression),
+  property: Expression,
   computed: expect(boolean).default(false)
 });
 
@@ -244,7 +244,7 @@ var AssignmentOperator = /^(=|\+=|-=|\*|\/=|%=|<<=|>>=|>>>=|\|=|\^=|&=)$/;
 var AssignmentExpression = describe(Expression, {
   type: syntax.AssignmentExpression,
   operator: AssignmentOperator,
-  left: Pattern,
+  left: Expression,
   right: Expression
 });
 
@@ -500,20 +500,47 @@ var Function = types.Function = { test: function(item) {
 
 // # from esprima#harmony
 
-// "ClassBody", "ClassDeclaration", "ClassExpression", "MethodDefinition",
-// "ExportDeclaration", "ExportBatchSpecifier", "ExportSpecifier",
-// "ImportDeclaration", "ImportSpecifier", "ModuleDeclaration",
-// "SpreadElement",
-// "TaggedTemplateExpression", "TemplateElement", "TemplateLiteral"
+// # Classes
+
+var MethodDefinition = describe(Node, {
+  type: syntax.MethodDefinition,
+  key: Identifier,
+  value: FunctionExpression,
+  kind: expect(string).default(''),
+  static: expect(boolean).default(false)
+});
+
+var ClassBody = describe(Expression, {
+  type: syntax.ClassBody,
+  body: [ MethodDefinition ]
+});
+
+var ClassDeclaration = describe(Declaration, {
+  type: syntax.ClassDeclaration,
+  id: Identifier,
+  superClass: expect(Expression, null).default(null),
+  body: ClassBody
+});
+
+var ClassExpression = describe(Expression, {
+  type: syntax.ClassExpression,
+  id: Identifier,
+  superClass: expect(Expression, null).default(null),
+  body: ClassBody
+});
+
+var Class = types.Class = expect(ClassExpression, ClassDeclaration);
+
+// #
 
 var SpreadElement = describe(Expression, {
   type: syntax.SpreadElement,
   argument: Expression
 });
 
-// var missing = [];
-
-// for (var key in s) if (!(key in nodes)) missing.push(key);
-// console.warn('missing', missing);
+// missing:
+// "ExportDeclaration", "ExportBatchSpecifier", "ExportSpecifier",
+// "ImportDeclaration", "ImportSpecifier", "ModuleDeclaration",
+// "TaggedTemplateExpression", "TemplateElement", "TemplateLiteral"
 
 module.exports = types;
