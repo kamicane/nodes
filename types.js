@@ -245,7 +245,7 @@ var AssignmentOperator = /^(=|\+=|-=|\*|\/=|%=|<<=|>>=|>>>=|\|=|\^=|&=)$/;
 var AssignmentExpression = describe(Expression, {
   type: syntax.AssignmentExpression,
   operator: AssignmentOperator,
-  left: Pattern,
+  left: expect(Pattern, Expression),
   right: Expression
 });
 
