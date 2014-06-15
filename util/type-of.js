@@ -10,6 +10,10 @@ typeOf.String = function(item) {
   return typeOf(item) === 'String';
 };
 
+typeOf.Object = function(item) {
+  return typeOf(item) === 'Object';
+};
+
 typeOf.Number = function(item) {
   return typeOf(item) === 'Number';
 };

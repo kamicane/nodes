@@ -16,6 +16,7 @@ var string = { test: typeOf.String };
 var boolean = { test: typeOf.Boolean };
 var number = { test: typeOf.Number };
 var regexp = { test: typeOf.RegExp };
+var object = { test: typeOf.Object };
 
 var expect = factory.expect;
 var types = factory.types;
@@ -90,7 +91,6 @@ ArrayPattern.pre = function(ast) {
       case syntax.ObjectExpression: node.type = syntax.ObjectPattern; break;
     }
   });
-
   return ast;
 };
 
@@ -98,7 +98,8 @@ ArrayPattern.pre = function(ast) {
 
 var Literal = describe(Expression, {
   type: syntax.Literal,
-  value: expect(string, boolean, null, number, regexp)
+  value: expect(string, boolean, null, number, regexp),
+  raw: expect(string, null).default(null)
 });
 
 // # Property
@@ -536,6 +537,20 @@ var Class = types.Class = expect(ClassExpression, ClassDeclaration);
 var SpreadElement = describe(Expression, {
   type: syntax.SpreadElement,
   argument: Expression
+});
+
+// #
+
+var TemplateElement = describe(Node, {
+  type: syntax.TemplateElement,
+  value: object,
+  tail: boolean
+});
+
+var TemplateLiteral = describe(Expression, {
+  type: syntax.TemplateLiteral,
+  quasis: [ TemplateElement ],
+  expressions: [ Expression ]
 });
 
 // missing:
