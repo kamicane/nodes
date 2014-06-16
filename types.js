@@ -453,7 +453,7 @@ var ComprehensionExpression = describe(Expression, {
 var TryStatement = describe(Statement, {
   type: syntax.TryStatement,
   block: BlockStatement,
-  handler: expect(CatchClause, null).default(null),
+  handlers: [ CatchClause ],
   guardedHandlers: [ CatchClause ],
   finalizer: expect(BlockStatement, null).default(null)
 });
