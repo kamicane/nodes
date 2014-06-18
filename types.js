@@ -518,14 +518,14 @@ var ClassBody = describe(Expression, {
 
 var ClassDeclaration = describe(Declaration, {
   type: syntax.ClassDeclaration,
-  id: Identifier,
+  id: expect(Identifier, null).default(null),
   superClass: expect(Expression, null).default(null),
   body: ClassBody
 });
 
 var ClassExpression = describe(Expression, {
   type: syntax.ClassExpression,
-  id: Identifier,
+  id: expect(Identifier, null).default(null),
   superClass: expect(Expression, null).default(null),
   body: ClassBody
 });
