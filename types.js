@@ -170,6 +170,14 @@ var FunctionDeclaration = describe(Declaration, {
   expression: expect(boolean).default(false)
 });
 
+FunctionDeclaration.pre = function(ast) { // esprima esprima why undefined on defaults instead of null
+  var defaults = ast.defaults;
+  if (defaults && defaults.length) for (var i = 0; i < defaults.length; i++) {
+    if (defaults[i] === void 0) defaults[i] = null;
+  }
+  return ast;
+};
+
 // # FunctionExpression
 
 var FunctionExpression = describe(Expression, {
@@ -182,6 +190,8 @@ var FunctionExpression = describe(Expression, {
   generator: expect(boolean).default(false),
   expression: expect(boolean).default(false)
 });
+
+FunctionExpression.pre = FunctionDeclaration.pre;
 
 // # CallExpression
 
@@ -490,6 +500,8 @@ var ArrowFunctionExpression = describe(Expression, {
   body: expect(BlockStatement, Expression),
   expression: expect(boolean).default(false)
 });
+
+ArrowFunctionExpression.pre = FunctionDeclaration.pre;
 
 // # Function
 
