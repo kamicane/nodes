@@ -83,17 +83,6 @@ var ArrayPattern = describe(Node, {
   elements: [ Pattern, null ]
 });
 
-// todo: remove this when for of and for in parse patterns correctly
-ArrayPattern.pre = function(ast) {
-  ast.elements.forEach(function(node) {
-    if (node) switch (node.type) {
-      case syntax.ArrayExpression: node.type = syntax.ArrayPattern; break;
-      case syntax.ObjectExpression: node.type = syntax.ObjectPattern; break;
-    }
-  });
-  return ast;
-};
-
 // # Literal
 
 var Literal = describe(Expression, {
@@ -121,19 +110,6 @@ var ObjectPattern = describe(Node, {
     return Pattern.test(item.value);
   } } ]
 });
-
-// todo: remove this when for of and for in parse patterns correctly
-ObjectPattern.pre = function(ast) {
-  ast.properties.forEach(function(node) {
-    var value = node.value;
-    switch (value.type) {
-      case syntax.ArrayExpression: value.type = syntax.ArrayPattern; break;
-      case syntax.ObjectExpression: value.type = syntax.ObjectPattern; break;
-    }
-  });
-
-  return ast;
-};
 
 // # Declaration
 
@@ -170,14 +146,6 @@ var FunctionDeclaration = describe(Declaration, {
   expression: expect(boolean).default(false)
 });
 
-FunctionDeclaration.pre = function(ast) { // esprima esprima why undefined on defaults instead of null
-  var defaults = ast.defaults;
-  if (defaults && defaults.length) for (var i = 0; i < defaults.length; i++) {
-    if (defaults[i] === void 0) defaults[i] = null;
-  }
-  return ast;
-};
-
 // # FunctionExpression
 
 var FunctionExpression = describe(Expression, {
@@ -190,8 +158,6 @@ var FunctionExpression = describe(Expression, {
   generator: expect(boolean).default(false),
   expression: expect(boolean).default(false)
 });
-
-FunctionExpression.pre = FunctionDeclaration.pre;
 
 // # CallExpression
 
@@ -363,21 +329,11 @@ var ConditionalExpression = describe(Expression, {
 
 var ForInStatement = describe(Statement, {
   type: syntax.ForInStatement,
-  left: expect(VariableDeclaration, Pattern), // this should not have Expression. Mozilla has it. Esprima parses it.
+  left: expect(VariableDeclaration, Pattern, MemberExpression),
   right: Expression,
   body: Statement,
   each: expect(boolean).default(false)
 });
-
-// todo: remove this when for of and for in parse patterns correctly
-ForInStatement.pre = function(ast) {
-  var node = ast.left;
-  switch (node.type) {
-    case syntax.ArrayExpression: node.type = syntax.ArrayPattern; break;
-    case syntax.ObjectExpression: node.type = syntax.ObjectPattern; break;
-  }
-  return ast;
-};
 
 // #
 
@@ -422,13 +378,10 @@ var SwitchStatement = describe(Statement, {
 
 var ForOfStatement = describe(Statement, {
   type: syntax.ForOfStatement,
-  left: expect(VariableDeclaration, Pattern), // this should not have Expression
+  left: expect(VariableDeclaration, Pattern, MemberExpression),
   right: Expression,
   body: Statement
 });
-
-// todo: remove this when forOf / forIn get fixed in esprima
-ForOfStatement.pre = ForInStatement.pre;
 
 // #
 
@@ -439,8 +392,6 @@ var ComprehensionBlock = describe(Node, {
   each: expect(boolean).default(false),
   of: expect(boolean).default(true)
 });
-
-ComprehensionBlock.pre = ForOfStatement.pre;
 
 // #
 
@@ -500,8 +451,6 @@ var ArrowFunctionExpression = describe(Expression, {
   body: expect(BlockStatement, Expression),
   expression: expect(boolean).default(false)
 });
-
-ArrowFunctionExpression.pre = FunctionDeclaration.pre;
 
 // # Function
 
@@ -565,9 +514,40 @@ var TemplateLiteral = describe(Expression, {
   expressions: [ Expression ]
 });
 
+var ModuleDeclaration = describe(Declaration, {
+  type: syntax.ModuleDeclaration,
+  id: Identifier,
+  source: Literal
+});
+
+var ImportSpecifier = describe(Expression, {
+  type: syntax.ImportSpecifier,
+  id: Identifier,
+  name: expect(Identifier, null).default(null)
+});
+
+var ExportSpecifier = describe(Expression, {
+  type: syntax.ExportSpecifier,
+  id: Identifier,
+  name: expect(Identifier, null).default(null)
+});
+
+var ImportDeclaration = describe(Declaration, {
+  type: syntax.ImportDeclaration,
+  specifiers: [ ImportSpecifier ],
+  kind: /^(named|default)$/,
+  source: Literal
+});
+
+var ExportDeclaration = describe(Declaration, {
+  type: syntax.ExportDeclaration,
+  declaration: expect(Declaration, Expression, null).default(null),
+  specifiers: [ ExportSpecifier ],
+  default: expect(boolean).default(false)
+});
+
 // missing:
-// "ExportDeclaration", "ExportBatchSpecifier", "ExportSpecifier",
-// "ImportDeclaration", "ImportSpecifier", "ModuleDeclaration",
-// "TaggedTemplateExpression", "TemplateElement", "TemplateLiteral"
+// "ExportBatchSpecifier"
+// "TaggedTemplateExpression"
 
 module.exports = types;
