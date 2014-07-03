@@ -95,11 +95,12 @@ var Literal = describe(Expression, {
 
 var Property = describe(Node, {
   type: syntax.Property,
-  key: expect(Literal, Identifier),
+  key: Expression,
   value: expect(Pattern, Expression),
   kind: /^(init|get|set)$/,
   shorthand: expect(boolean).default(false),
-  method: expect(boolean).default(false)
+  method: expect(boolean).default(false),
+  computed: expect(boolean).default(false)
 });
 
 // # ObjectPattern
@@ -466,10 +467,11 @@ var Function = types.Function = { test: function(item) {
 
 var MethodDefinition = describe(Node, {
   type: syntax.MethodDefinition,
-  key: Identifier,
+  key: Expression,
   value: FunctionExpression,
   kind: expect(string).default(''),
-  static: expect(boolean).default(false)
+  static: expect(boolean).default(false),
+  computed: expect(boolean).default(false)
 });
 
 var ClassBody = describe(Expression, {
