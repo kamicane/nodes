@@ -1,6 +1,6 @@
 {
   "name": "nodes",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "document object model for ast nodes, with parent references, queries and validation",
   "main": "index.js",
   "keywords": [
