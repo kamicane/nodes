@@ -11,6 +11,6 @@
   "author": "Valerio Proietti <kamicane@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "slick": "~1.12.1"
+    "slick": "~1.12.2"
   }
 }

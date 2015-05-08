@@ -1,0 +1,996 @@
+{
+
+  "Node": {
+    "kind": "node",
+
+    "keys": {
+      "loc": {
+        "kind": "object",
+        "accepts": "SourceLocation"
+      }
+    }
+  },
+
+  "SourceLocation": {
+    "kind": "object",
+
+    "keys": {
+      "source": {
+        "kind": "native",
+        "accepts": [ "String", null ]
+      },
+
+      "start": {
+        "kind": "object",
+        "accepts": "Position"
+      },
+
+      "end": {
+        "kind": "object",
+        "accepts": "Position"
+      }
+    }
+
+  },
+
+  "Position": {
+    "kind": "object",
+
+    "keys": {
+      "line": {
+        "kind": "native",
+        "accepts": [ "Number" ]
+      },
+      "column": {
+        "kind": "native",
+        "accepts": [ "Number" ]
+      }
+    }
+  },
+
+  "Program": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "body": {
+        "kind": "list",
+        "accepts": [ "Statement" ]
+      },
+      "sourceType": {
+        "kind": "strict",
+        "accepts": [ "module", "script" ]
+      }
+    }
+  },
+
+  "Function": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "id": {
+        "kind": "node",
+        "accepts": [ "Identifier", null ]
+      },
+      "generator": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      },
+      "params": {
+        "kind": "list",
+        "accepts": [ "Pattern" ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "BlockStatement" ]
+      }
+    }
+  },
+
+  "Statement": {
+    "inherits": [ "Node" ]
+  },
+
+  "EmptyStatement": {
+    "inherits": [ "Statement" ]
+  },
+
+  "BlockStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "body": {
+        "kind": "list",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "ExpressionStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "expression": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "IfStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "test": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "consequent": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      },
+      "alternate": {
+        "kind": "node",
+        "accepts": [ "Statement", null ]
+      }
+    }
+  },
+
+  "LabeledStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "label": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "BreakStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "label": {
+        "kind": "node",
+        "accepts": [ "Identifier", null ]
+      }
+    }
+  },
+
+  "ContinueStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "label": {
+        "kind": "node",
+        "accepts": [ "Identifier", null ]
+      }
+    }
+  },
+
+  "WithStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "object": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "SwitchStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "discriminant": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      },
+      "cases": {
+        "kind": "list",
+        "accepts": [ "SwitchCase" ]
+      },
+      "lexical": {
+        "kind": "strict",
+        "accepts": [ false ]
+      }
+    }
+  },
+
+  "ReturnStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "argument": {
+        "kind": "node",
+        "accepts": [ "Expression", null ]
+      }
+    }
+  },
+
+  "ThrowStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "argument": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "TryStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "block": {
+        "kind": "node",
+        "accepts": [ "BlockStatement" ]
+      },
+      "handler": {
+        "kind": "node",
+        "accepts": [ "CatchClause", null ]
+      },
+      "finalizer": {
+        "kind": "node",
+        "accepts": [ "BlockStatement", null ]
+      }
+    }
+  },
+
+  "WhileStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "test": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "DoWhileStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "test": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "ForStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "init": {
+        "kind": "node",
+        "accepts": [ "VariableDeclaration", "Expression", null ]
+      },
+      "test": {
+        "kind": "node",
+        "accepts": [ "Expression", null ]
+      },
+      "update": {
+        "kind": "node",
+        "accepts": [ "Expression", null ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "ForInStatement": {
+    "inherits": [ "Statement" ],
+    "keys": {
+      "left": {
+        "kind": "node",
+        "accepts": [ "VariableDeclaration", "Expression", null ]
+      },
+      "right": {
+        "kind": "node",
+        "accepts": [ "Expression"]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "ForOfStatement": {
+    "inherits": [ "ForInStatement" ]
+  },
+
+  "DebuggerStatement": {
+    "inherits": [ "Statement" ]
+  },
+
+  "DebuggerStatement": {
+    "inherits": [ "Statement" ]
+  },
+
+  "Declaration": {
+    "inherits": [ "Statement" ]
+  },
+
+  "FunctionDeclaration": {
+    "inherits": [ "Function", "Declaration" ],
+    "keys": {
+      "id": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      }
+    }
+  },
+
+  "VariableDeclaration": {
+    "inherits": [ "Declaration" ],
+    "keys": {
+      "declarations": {
+        "kind": "list",
+        "accepts": [ "VariableDeclarator" ]
+      },
+      "kind": {
+        "kind": "strict",
+        "accepts": [ "var", "let", "const" ]
+      }
+    }
+  },
+
+  "VariableDeclarator": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "id": {
+        "kind": "node",
+        "accepts": [ "Pattern" ]
+      },
+      "init": {
+        "kind": "node",
+        "accepts": [ "Expression", null ]
+      }
+    }
+  },
+
+  "Expression": {
+    "inherits": [ "Node" ]
+  },
+
+  "ThisExpression": {
+    "inherits": [ "Expression" ]
+  },
+
+  "SpreadElement": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "argument": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "ArrayExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "elements": {
+        "kind": "list",
+        "accepts": [ "Expression", "SpreadElement", null ]
+      }
+    }
+  },
+
+  "ObjectExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "properties": {
+        "kind": "list",
+        "accepts": [ "Property", null ]
+      }
+    }
+  },
+
+  "Property": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "key": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "value": {
+        "kind": "node",
+        "accepts": [ "Expression", "Pattern" ]
+      },
+      "kind": {
+        "kind": "strict",
+        "accepts": [ "init", "get", "set" ]
+      },
+      "method": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      },
+      "shorthand": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      },
+      "computed": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      }
+    }
+  },
+
+  "FunctionExpression": {
+    "inherits": [ "Function", "Expression" ]
+  },
+
+  "ArrowFunctionExpression": {
+    "inherits": [ "Function", "Expression" ],
+    "keys": {
+      "body": {
+        "kind": "node",
+        "accepts": [ "BlockStatement", "Expression" ]
+      },
+      "expression": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      }
+    }
+  },
+
+  "YieldExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "argument": {
+        "kind": "node",
+        "accepts": [ "Expression", null ]
+      },
+      "expression": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      }
+    }
+  },
+
+  "SequenceExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "expressions": {
+        "kind": "list",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "UnaryExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "operator": {
+        "kind": "strict",
+        "accepts": [ "-", "+", "!", "~", "typeof", "void", "delete" ]
+      },
+      "prefix": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      },
+      "argument": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "BinaryExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "operator": {
+        "kind": "strict",
+        "accepts": [
+          "==", "!=", "===", "!==",
+          "<", "<=", ">", ">=",
+          "<<", ">>", ">>>",
+          "+", "-", "*", "/", "%",
+          "|", "^", "&", "in",
+          "instanceof"
+        ]
+      },
+      "left": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "right": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "AssignmentExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "operator": {
+        "kind": "strict",
+        "accepts": [
+          "=", "+=", "-=", "*=", "/=", "%=",
+          "<<=", ">>=", ">>>=",
+          "|=", "^=", "&="
+        ]
+      },
+      "left": {
+        "kind": "node",
+        "accepts": [ "Pattern", "Expression", "MemberExpression" ]
+      },
+      "right": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "UpdateExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "operator": {
+        "kind": "strict",
+        "accepts": [ "++", "--" ]
+      },
+      "argument": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "prefix": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      }
+    }
+  },
+
+  "LogicalExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "operator": {
+        "kind": "strict",
+        "accepts": [ "||", "&&" ]
+      },
+      "left": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "right": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "ConditionalExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "test": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "alternate": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "consequent": {
+        "kind": "list",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "CallExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "callee": {
+        "kind": "node",
+        "accepts": [ "Expression", "Super" ]
+      },
+      "arguments": {
+        "kind": "list",
+        "accepts": [ "Expression", "SpreadElement" ]
+      }
+    }
+  },
+
+  "NewExpression": {
+    "inherits": [ "Expression" ]
+  },
+
+  "MemberExpression": {
+    "inherits": [ "Expression", "Pattern" ],
+    "keys": {
+      "object": {
+        "kind": "node",
+        "accepts": [ "Expression", "Super" ]
+      },
+      "property": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "computed": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      }
+    }
+  },
+
+  "Super": {
+    "inherits": [ "Node" ]
+  },
+
+  "Pattern": {
+    "inherits": [ "Node" ]
+  },
+
+  "ObjectPattern": {
+    "inherits": [ "Pattern" ],
+    "keys": {
+      "properties": {
+        "kind": "list",
+        "accepts": [ "Property" ]
+      }
+    }
+  },
+
+  "ArrayPattern": {
+    "inherits": [ "Pattern" ],
+    "keys": {
+      "elements": {
+        "kind": "list",
+        "accepts": [ "Pattern", null ]
+      }
+    }
+  },
+
+  "RestElement": {
+    "inherits": [ "Pattern" ],
+    "keys": {
+      "argument": {
+        "kind": "node",
+        "accepts": [ "Pattern" ]
+      }
+    }
+  },
+
+  "AssignmentPattern": {
+    "inherits": [ "Pattern" ],
+    "keys": {
+      "operator": {
+        "kind": "strict",
+        "accepts": [ "=" ]
+      },
+      "left": {
+        "kind": "node",
+        "accepts": [ "Pattern" ]
+      },
+      "right": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "SwitchCase": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "test": {
+        "kind": "node",
+        "accepts": [ "Expression", null ]
+      },
+      "consequent": {
+        "kind": "node",
+        "accepts": [ "Statement" ]
+      }
+    }
+  },
+
+  "CatchClause": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "param": {
+        "kind": "native",
+        "accepts": [ "Pattern" ]
+      },
+      "guard": {
+        "kind": "strict",
+        "accepts": [ null ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "BlockStatement" ]
+      }
+    }
+  },
+
+  "Identifier": {
+    "inherits": [ "Expression", "Pattern" ],
+    "keys": {
+      "name": {
+        "kind": "native",
+        "accepts": [ "String" ]
+      }
+    }
+  },
+
+  "RegExpValue": {
+    "kind": "object",
+
+    "keys": {
+      "pattern": {
+        "kind": "native",
+        "accepts": [ "String" ]
+      },
+      "flags": {
+        "kind": "native",
+        "accepts": [ "String" ]
+      }
+    }
+  },
+
+  "Literal": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "value": {
+        "kind": "native",
+        "accepts": [ "String", "Boolean", null, "Number", "RegExp" ]
+      },
+      "raw": {
+        "kind": "native",
+        "accepts": [ "String", null ]
+      },
+      "regex": {
+        "kind": "object",
+        "accepts": "RegExpValue"
+      }
+    }
+  },
+
+  "TemplateLiteral": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "quasis": {
+        "kind": "list",
+        "accepts": [ "TemplateElement" ]
+      },
+      "expressions": {
+        "kind": "list",
+        "accepts": [ "Expression" ]
+      }
+    }
+  },
+
+  "TaggedTemplateExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "tag": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "quasi": {
+        "kind": "node",
+        "accepts": [ "TemplateLiteral" ]
+      }
+    }
+  },
+
+  "TaggedTemplateExpression": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "tag": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "quasi": {
+        "kind": "node",
+        "accepts": [ "TemplateLiteral" ]
+      }
+    }
+  },
+
+  "TemplateValue": {
+    "kind": "object",
+
+    "keys": {
+      "cooked": {
+        "kind": "native",
+        "accepts": [ "String" ]
+      },
+      "raw": {
+        "kind": "native",
+        "accepts": [ "String" ]
+      }
+    }
+  },
+
+  "TemplateElement": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "tail": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      },
+      "value": {
+        "kind": "object",
+        "accepts": "TemplateValue"
+      }
+    }
+  },
+
+  "Class": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "superClass": {
+        "kind": "node",
+        "accepts": [ "Expression" ]
+      },
+      "body": {
+        "kind": "node",
+        "accepts": [ "ClassBody" ]
+      }
+    }
+  },
+
+  "ClassBody": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "body": {
+        "kind": "list",
+        "accepts": [ "MethodDefinition" ]
+      }
+    }
+  },
+
+  "MethodDefinition": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "key": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      },
+      "value": {
+        "kind": "node",
+        "accepts": [ "FunctionExpression" ]
+      },
+      "kind": {
+        "kind": "strict",
+        "accepts": [ "constructor", "method", "get", "set" ]
+      },
+      "coputed": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      },
+      "static": {
+        "kind": "native",
+        "accepts": [ "Boolean" ]
+      }
+    }
+  },
+
+  "ClassDeclaration": {
+    "inherits": [ "Class", "Declaration" ],
+    "keys": {
+      "id": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      }
+    }
+  },
+
+  "ClassExpression": {
+    "inherits": [ "Class", "Expression" ]
+  },
+
+  "MetaProperty": {
+    "inherits": [ "Expression" ],
+    "keys": {
+      "meta": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      },
+      "property": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      }
+    }
+  },
+
+  "ModuleSpecifier": {
+    "inherits": [ "Identifier" ]
+  },
+
+  "ImportDeclaration": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "specifiers": {
+        "kind": "list",
+        "accepts": [ "ImportSpecifier", "ImportDefaultSpecifier", "ImportNamespaceSpecifier" ]
+      }
+    }
+  },
+
+  "ImportSpecifier": {
+    "inherits": [ "ModuleSpecifier" ],
+    "keys": {
+      "imported": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      }
+    }
+  },
+
+  "ImportDefaultSpecifier": {
+    "inherits": [ "ModuleSpecifier" ]
+  },
+
+  "ImportNamespaceSpecifier": {
+    "inherits": [ "ModuleSpecifier" ]
+  },
+
+  "ExportNamedDeclaration": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "declaration": {
+        "kind": "node",
+        "accepts": [ "Declaration", null ]
+      },
+      "specifiers": {
+        "kind": "list",
+        "accepts": [ "ExportSpecifier" ]
+      },
+      "source": {
+        "kind": "node",
+        "accepts": [ "Literal", null ]
+      }
+    }
+  },
+
+  "ExportSpecifier": {
+    "inherits": [ "ModuleSpecifier" ],
+    "keys": {
+      "exported": {
+        "kind": "node",
+        "accepts": [ "Identifier" ]
+      },
+      "specifiers": {
+        "kind": "list",
+        "accepts": [ "ExportSpecifier" ]
+      },
+      "source": {
+        "kind": "node",
+        "accepts": [ "Literal", null ]
+      }
+    }
+  },
+
+  "ExportDefaultDeclaration": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "declaration": {
+        "kind": "node",
+        "accepts": [ "Declaration", "Expression" ]
+      }
+    }
+  },
+
+  "ExportAllDeclaration": {
+    "inherits": [ "Node" ],
+    "keys": {
+      "source": {
+        "kind": "node",
+        "accepts": [ "Literal" ]
+      }
+    }
+  }
+
+}

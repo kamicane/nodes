@@ -1,14 +1,11 @@
-'use strict';
+"use strict";
 
-require('./lib/finder');
-var types = require('./types');
-var factory = require('./lib/factory');
-var syntax = require('./syntax.json');
+var factory = require("./lib/factory");
+var build = require("./lib/build");
 
-var build = factory.build;
-var lists = factory.lists;
+require("./lib/finder");
 
-exports.default = exports.build = build;
-exports.syntax = syntax;
-exports.nodes = types;
-exports.lists = lists;
+exports.build = build;
+exports.syntax = factory.syntax;
+exports.types = factory.types;
+exports.instanceOf = factory.instanceOf;
