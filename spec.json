@@ -1,52 +1,6 @@
 {
 
-  "Node": {
-    "kind": "node",
-
-    "keys": {
-      "loc": {
-        "kind": "object",
-        "accepts": "SourceLocation"
-      }
-    }
-  },
-
-  "SourceLocation": {
-    "kind": "object",
-
-    "keys": {
-      "source": {
-        "kind": "native",
-        "accepts": [ "String", null ]
-      },
-
-      "start": {
-        "kind": "object",
-        "accepts": "Position"
-      },
-
-      "end": {
-        "kind": "object",
-        "accepts": "Position"
-      }
-    }
-
-  },
-
-  "Position": {
-    "kind": "object",
-
-    "keys": {
-      "line": {
-        "kind": "native",
-        "accepts": [ "Number" ]
-      },
-      "column": {
-        "kind": "native",
-        "accepts": [ "Number" ]
-      }
-    }
-  },
+  "Node": {},
 
   "Program": {
     "inherits": [ "Node" ],
@@ -723,21 +677,6 @@
     }
   },
 
-  "RegExpValue": {
-    "kind": "object",
-
-    "keys": {
-      "pattern": {
-        "kind": "native",
-        "accepts": [ "String" ]
-      },
-      "flags": {
-        "kind": "native",
-        "accepts": [ "String" ]
-      }
-    }
-  },
-
   "Literal": {
     "inherits": [ "Expression" ],
     "keys": {
@@ -748,10 +687,6 @@
       "raw": {
         "kind": "native",
         "accepts": [ "String", null ]
-      },
-      "regex": {
-        "kind": "object",
-        "accepts": "RegExpValue"
       }
     }
   },
@@ -798,31 +733,12 @@
     }
   },
 
-  "TemplateValue": {
-    "kind": "object",
-
-    "keys": {
-      "cooked": {
-        "kind": "native",
-        "accepts": [ "String" ]
-      },
-      "raw": {
-        "kind": "native",
-        "accepts": [ "String" ]
-      }
-    }
-  },
-
   "TemplateElement": {
     "inherits": [ "Node" ],
     "keys": {
       "tail": {
         "kind": "native",
         "accepts": [ "Boolean" ]
-      },
-      "value": {
-        "kind": "object",
-        "accepts": "TemplateValue"
       }
     }
   },
